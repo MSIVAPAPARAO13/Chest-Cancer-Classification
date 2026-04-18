@@ -4,7 +4,7 @@ import yaml
 import joblib
 import base64
 from pathlib import Path
-from typing import Any, List
+from typing import Any
 
 from box import ConfigBox
 from box.exceptions import BoxValueError
@@ -39,11 +39,10 @@ def read_yaml(path_to_yaml: Path) -> ConfigBox:
 
 
 # =========================
-# DIRECTORY FUNCTIONS
+# DIRECTORY FUNCTIONS (FIXED 🔥)
 # =========================
 
-@ensure_annotations
-def create_directories(paths: List[Path], verbose: bool = True):
+def create_directories(paths, verbose: bool = True):
     """Create multiple directories"""
 
     for path in paths:
