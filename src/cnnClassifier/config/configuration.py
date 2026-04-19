@@ -1,3 +1,4 @@
+
 import os
 from pathlib import Path
 
@@ -12,20 +13,16 @@ from cnnClassifier.entity.config_entity import (
 
 
 class ConfigurationManager:
-    def __init__(
-        self,
-        config_filepath: Path = CONFIG_FILE_PATH,
-        params_filepath: Path = PARAMS_FILE_PATH
-    ):
+    def __init__(self,
+                 config_filepath: Path = CONFIG_FILE_PATH,
+                 params_filepath: Path = PARAMS_FILE_PATH):
+
         self.config = read_yaml(config_filepath)
         self.params = read_yaml(params_filepath)
 
         create_directories([self.config.artifacts_root])
 
 
-    # =========================
-    # Data Ingestion
-    # =========================
     def get_data_ingestion_config(self) -> DataIngestionConfig:
         config = self.config.data_ingestion
         create_directories([config.root_dir])
@@ -38,9 +35,6 @@ class ConfigurationManager:
         )
 
 
-    # =========================
-    # Prepare Base Model
-    # =========================
     def get_prepare_base_model_config(self) -> PrepareBaseModelConfig:
         config = self.config.prepare_base_model
         create_directories([config.root_dir])
@@ -57,9 +51,6 @@ class ConfigurationManager:
         )
 
 
-    # =========================
-    # Training Config
-    # =========================
     def get_training_config(self) -> TrainingConfig:
         training = self.config.training
         prepare_base_model = self.config.prepare_base_model
@@ -83,9 +74,6 @@ class ConfigurationManager:
         )
 
 
-    # =========================
-    # Evaluation Config (FIXED)
-    # =========================
     def get_evaluation_config(self) -> EvaluationConfig:
 
         create_directories([Path("artifacts/model_evaluation")])
@@ -93,9 +81,9 @@ class ConfigurationManager:
         return EvaluationConfig(
             path_of_model=Path("artifacts/training/model.h5"),
             training_data=Path("artifacts/data_ingestion/Chest-CT-Scan-data"),
-            mlflow_uri="https://dagshub.com/MSIVAPAPARAO13/Chest-Cancer-Classification.mlflow",
-            all_params=dict(self.params),   # ✅ safer
+            mlflow_uri="http://127.0.0.1:5000",   #  LOCAL MLflow
+            all_params=dict(self.params),
             params_image_size=self.params.IMAGE_SIZE,
             params_batch_size=self.params.BATCH_SIZE,
-            metric_file_name=Path("artifacts/model_evaluation/scores.json")  # ✅ FIX ADDED
+            metric_file_name=Path("artifacts/model_evaluation/scores.json")
         )

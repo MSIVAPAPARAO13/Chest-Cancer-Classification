@@ -1,3 +1,4 @@
+
 import os
 import json
 import yaml
@@ -39,11 +40,11 @@ def read_yaml(path_to_yaml: Path) -> ConfigBox:
 
 
 # =========================
-# DIRECTORY FUNCTIONS (FIXED 🔥)
+# DIRECTORY FUNCTIONS
 # =========================
 
 def create_directories(paths, verbose: bool = True):
-    """Create multiple directories"""
+    """Create multiple directories safely"""
 
     for path in paths:
         os.makedirs(path, exist_ok=True)
@@ -59,21 +60,34 @@ def create_directories(paths, verbose: bool = True):
 def save_json(path: Path, data: dict):
     """Save dictionary as JSON"""
 
-    with open(path, "w") as f:
-        json.dump(data, f, indent=4)
+    try:
+        # ensure parent directory exists
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
 
-    logger.info(f"JSON saved at: {path}")
+        with open(path, "w") as f:
+            json.dump(data, f, indent=4)
+
+        logger.info(f"JSON saved at: {path}")
+
+    except Exception as e:
+        logger.exception(f"Error saving JSON: {e}")
+        raise e
 
 
 @ensure_annotations
 def load_json(path: Path) -> ConfigBox:
     """Load JSON and return as ConfigBox"""
 
-    with open(path, "r") as f:
-        content = json.load(f)
+    try:
+        with open(path, "r") as f:
+            content = json.load(f)
 
-    logger.info(f"JSON loaded from: {path}")
-    return ConfigBox(content)
+        logger.info(f"JSON loaded from: {path}")
+        return ConfigBox(content)
+
+    except Exception as e:
+        logger.exception(f"Error loading JSON: {e}")
+        raise e
 
 
 # =========================
@@ -84,17 +98,29 @@ def load_json(path: Path) -> ConfigBox:
 def save_bin(data: Any, path: Path):
     """Save object as binary file"""
 
-    joblib.dump(value=data, filename=path)
-    logger.info(f"Binary file saved at: {path}")
+    try:
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+
+        joblib.dump(value=data, filename=path)
+        logger.info(f"Binary file saved at: {path}")
+
+    except Exception as e:
+        logger.exception(f"Error saving binary file: {e}")
+        raise e
 
 
 @ensure_annotations
 def load_bin(path: Path) -> Any:
     """Load binary file"""
 
-    data = joblib.load(path)
-    logger.info(f"Binary file loaded from: {path}")
-    return data
+    try:
+        data = joblib.load(path)
+        logger.info(f"Binary file loaded from: {path}")
+        return data
+
+    except Exception as e:
+        logger.exception(f"Error loading binary file: {e}")
+        raise e
 
 
 # =========================
@@ -105,8 +131,13 @@ def load_bin(path: Path) -> Any:
 def get_size(path: Path) -> str:
     """Get file size in KB"""
 
-    size_kb = round(os.path.getsize(path) / 1024)
-    return f"~ {size_kb} KB"
+    try:
+        size_kb = round(os.path.getsize(path) / 1024)
+        return f"~ {size_kb} KB"
+
+    except Exception as e:
+        logger.exception(f"Error getting file size: {e}")
+        raise e
 
 
 # =========================
@@ -116,18 +147,29 @@ def get_size(path: Path) -> str:
 def decode_image(img_string: str, file_name: str):
     """Decode base64 string and save as image"""
 
-    img_data = base64.b64decode(img_string)
+    try:
+        img_data = base64.b64decode(img_string)
 
-    with open(file_name, "wb") as f:
-        f.write(img_data)
+        with open(file_name, "wb") as f:
+            f.write(img_data)
 
-    logger.info(f"Image saved at: {file_name}")
+        logger.info(f"Image saved at: {file_name}")
+
+    except Exception as e:
+        logger.exception(f"Error decoding image: {e}")
+        raise e
 
 
 def encode_image_to_base64(image_path: Path) -> bytes:
     """Encode image to base64"""
 
-    with open(image_path, "rb") as f:
-        encoded = base64.b64encode(f.read())
+    try:
+        with open(image_path, "rb") as f:
+            encoded = base64.b64encode(f.read())
 
-    return encoded
+        return encoded
+
+    except Exception as e:
+        logger.exception(f"Error encoding image: {e}")
+        raise e
+

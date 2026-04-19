@@ -1,11 +1,9 @@
+
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Dict
 
 
-# =========================
-# Data Ingestion Config
-# =========================
 @dataclass(frozen=True)
 class DataIngestionConfig:
     root_dir: Path
@@ -14,9 +12,6 @@ class DataIngestionConfig:
     unzip_dir: Path
 
 
-# =========================
-# Prepare Base Model Config
-# =========================
 @dataclass(frozen=True)
 class PrepareBaseModelConfig:
     root_dir: Path
@@ -29,9 +24,6 @@ class PrepareBaseModelConfig:
     params_classes: int
 
 
-# =========================
-# Training Config
-# =========================
 @dataclass(frozen=True)
 class TrainingConfig:
     root_dir: Path
@@ -44,9 +36,6 @@ class TrainingConfig:
     params_image_size: List[int]
 
 
-# =========================
-# Evaluation Config (FIXED)
-# =========================
 @dataclass(frozen=True)
 class EvaluationConfig:
     path_of_model: Path
@@ -55,4 +44,5 @@ class EvaluationConfig:
     mlflow_uri: str
     params_image_size: List[int]
     params_batch_size: int
-    metric_file_name: Path   
+    metric_file_name: Path
+
